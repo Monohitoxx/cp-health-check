@@ -43,6 +43,8 @@ public class Main {
     static String[] payload;
     static Long[] offset;
     static boolean healthy = true;
+    static int maxCycle = 5;
+    static long cycleInterval = 30000;
 
     public static Properties loadProperties(String fileName) throws IOException {
         final Properties envProps = new Properties();
@@ -53,8 +55,8 @@ public class Main {
         return envProps;
     }
 
-    public static void main(String[] args) throws Exception {        
-    
+    private static void run() throws Exception {
+
         final Properties adminProps = Main.loadProperties("configuration/admin.properties");
         final String topic = adminProps.getProperty("health.topic.name");
 
@@ -137,6 +139,21 @@ public class Main {
             LOG.info("Cluster is healthy");
         else
             LOG.info("Cluster is NOT healthy");
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        final Properties props = Main.loadProperties("configuration/admin.properties");
+        cycleInterval = Long.parseLong(props.getProperty("cycle.interval"));
+        maxCycle = Integer.parseInt(props.getProperty("max.cycle"));
+        
+        int counter = 1;
+        while (counter <= maxCycle) {
+            LOG.info("Run cycle # " + counter);
+            run();
+            ++counter;
+            Thread.sleep(cycleInterval);
+        }
     }
     
     static String usingRandomUUID() {
