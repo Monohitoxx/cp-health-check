@@ -1,0 +1,11 @@
+---
+version: '2'
+
+services:
+  proactive-hc:
+    image: cp-healthcheck:latest
+    hostname: proactive-hc
+    container_name: cp-healthcheck
+    volumes:
+      - ./configuration:/configuration
+      
