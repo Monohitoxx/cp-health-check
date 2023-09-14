@@ -45,6 +45,7 @@ public class Main {
     static boolean healthy = true;
     static int maxCycle = 5;
     static long cycleInterval = 30000;
+    static boolean runInfinity = true;
 
     public static Properties loadProperties(String fileName) throws IOException {
         final Properties envProps = new Properties();
@@ -146,9 +147,10 @@ public class Main {
         final Properties props = Main.loadProperties("configuration/admin.properties");
         cycleInterval = Long.parseLong(props.getProperty("cycle.interval"));
         maxCycle = Integer.parseInt(props.getProperty("max.cycle"));
-        
+        runInfinity = Boolean.valueOf(props.getProperty("run.infinity"));
+
         int counter = 1;
-        while (counter <= maxCycle) {
+        while (counter <= maxCycle || runInfinity) {
             LOG.info("Run cycle # " + counter);
             run();
             ++counter;
