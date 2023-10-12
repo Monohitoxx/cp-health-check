@@ -2,18 +2,24 @@ package io.confluent.healthcheck;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeTopicsOptions;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
@@ -31,21 +37,21 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.ConfigResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    // private final Producer<String, String> producer;
-    // final String outTopic;
     static Logger LOG = LoggerFactory.getLogger(Main.class.getName());
     static int partitionCount;
     static String[] payload;
     static Long[] offset;
-    static boolean healthy = true;
+    static boolean healthy = false;
     static int maxCycle = 5;
     static long cycleInterval = 30000;
-    static boolean runInfinity = true;
+    static boolean infiniteRun = true;
+    static DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
     public static Properties loadProperties(String fileName) throws IOException {
         final Properties envProps = new Properties();
@@ -56,30 +62,60 @@ public class Main {
         return envProps;
     }
 
-    private static void run() throws Exception {
+    static void scanBrokers(Properties prop) {
 
-        final Properties adminProps = Main.loadProperties("configuration/admin.properties");
+        String brokers = prop.getProperty("bootstrap.servers");
+        List<String> brokerList = Arrays.asList(brokers.split(","));
+        brokerList.forEach(broker -> {
+            prop.setProperty("bootstrap.servers", broker);
+            try(AdminClient ac = AdminClient.create(prop)) {
+                DescribeClusterResult describeClusterResult = ac.describeCluster();
+                describeClusterResult.nodes().get();
+                // List<Integer> nodeId =  nodes.stream().map(Node::id).collect(Collectors.toList());
+                // nodeId.forEach(id -> LOG.info(id + " | " + b + " | online"));
+                LOG.info(broker + " | active");
+            } catch (Exception e) {
+                LOG.info(broker + " | inactive");
+            }
+        });
+    }
+
+    private static void run(Properties adminProps) {
+
+        // final Properties adminProps = Main.loadProperties("configuration/admin.properties");
+        boolean exist = false;
         final String topic = adminProps.getProperty("health.topic.name");
-
+        
         try(final AdminClient adminClient = AdminClient.create(adminProps)) {
-
-            scanBrokerNodes(adminClient);
-            boolean exist = isTopicExist(adminClient, topic);
+            Collection<Node> nodes = scanBrokerNodes(adminClient);
+            exist = isTopicExist(adminClient, topic);
             LOG.info("Is the Health Topic exist? " + exist);
             if (exist) {
                 scanTopic(adminClient, topic);
+                String mir = getTopicConfig(adminClient, topic, "min.insync.replicas");
+                if (nodes.size() < Integer.parseInt(mir)) {
+                    LOG.info("Cluster is NOT HEALTHY");
+                    return;
+                }
             }
 
-        } catch (ExecutionException e) {
-
-            e.printStackTrace();
-
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
         }
-
-        final Properties producerProps = Main.loadProperties("configuration/producer.properties");
+        
+        if (!exist) {
+            LOG.info("Health topic is not exist, skipping producer and consumer test");
+            return;
+        }
+        
+        Properties producerProps = new Properties();
+        adminProps.forEach((k,v) -> {
+            producerProps.put(k, v);
+        });
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("acks", "all");
 
         try (final Producer<String, String> producer = new KafkaProducer<>(producerProps)) {
             List<PartitionInfo> pInfo = producer.partitionsFor(topic);
@@ -93,17 +129,28 @@ public class Main {
                 Future<RecordMetadata> f = producer.send(record);
                 final RecordMetadata recordMetadata = f.get();
                 offsetToRead = recordMetadata.offset();
+                String timestamp = sdf.format(new Date(recordMetadata.timestamp()));
                 offset[i] = offsetToRead;
-                LOG.info("Produced " + payload[i] + " at partition " + i + " offset " + offset[i]);
+                LOG.info("Produced " + payload[i] + " dated " + timestamp + " at partition " + i + " offset " + offset[i]);
             }
             producer.close();
 
         } catch (Exception e) {
 
+            LOG.error("Failed to produce events to Kafka Cluster");
+            LOG.error(e.getMessage());
             e.printStackTrace();
         }
 
-        final Properties consumerProps = Main.loadProperties("configuration/consumer.properties");
+        Properties consumerProps = new Properties();
+        adminProps.forEach((k,v) -> {
+            consumerProps.put(k, v);
+        });
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("auto.offset.reset", "earliest");
+
+        int successCount = 0;
         try (final Consumer<String, String> consumer = new KafkaConsumer<>(consumerProps)) {
             
             for (int i = 0; i < partitionCount; ++i) {
@@ -120,8 +167,11 @@ public class Main {
                     final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofSeconds(1));
                     for (ConsumerRecord<String, String> record : consumerRecords) {
                         numberOfMessagesReadSoFar += 1;
-                        LOG.info("Consumed " + record.value() + " from partition " + record.partition() + " offset " + offset[i]);
-                        healthy = (!payload[i].equals(record.value())) ? false : true;
+                        String timestamp = sdf.format(new Date(record.timestamp()));
+                        LOG.info("Consumed " + record.value() + " dated " + timestamp + " from partition " + record.partition() + " offset " + offset[i]);
+                        if (payload[i].equals(record.value())) {
+                            successCount += 1;
+                        }
                         if (numberOfMessagesReadSoFar >= numberOfMessagesToRead){
                             keepOnReading = false;
                             break;
@@ -129,17 +179,21 @@ public class Main {
                     }
                 }
             }
+
+            healthy = (successCount == partitionCount) ? true : false;
             consumer.close();
 
         } catch (Exception e) {
 
+            LOG.error("Failed to consume events from Kafka Cluster");
+            LOG.error(e.getMessage());
             e.printStackTrace();
         }
 
         if (healthy)
-            LOG.info("Cluster is healthy");
+            LOG.info("Cluster is HEALTHY");
         else
-            LOG.info("Cluster is NOT healthy");
+            LOG.info("Cluster is NOT HEALTHY");
     }
 
     public static void main(String[] args) throws Exception {
@@ -147,12 +201,12 @@ public class Main {
         final Properties props = Main.loadProperties("configuration/admin.properties");
         cycleInterval = Long.parseLong(props.getProperty("cycle.interval"));
         maxCycle = Integer.parseInt(props.getProperty("max.cycle"));
-        runInfinity = Boolean.valueOf(props.getProperty("run.infinity"));
+        infiniteRun = Boolean.valueOf(props.getProperty("infinite.run"));
 
         int counter = 1;
-        while (counter <= maxCycle || runInfinity) {
+        while (counter <= maxCycle || infiniteRun) {
             LOG.info("Run cycle # " + counter);
-            run();
+            run(props);
             ++counter;
             Thread.sleep(cycleInterval);
         }
@@ -166,9 +220,16 @@ public class Main {
     static Collection<Node> scanBrokerNodes(AdminClient adminClient) throws Exception {
         DescribeClusterResult describeClusterResult = adminClient.describeCluster();
         Collection<Node> nodes = describeClusterResult.nodes().get();
-        nodes.forEach(node -> {
-            LOG.info(node.id() + " | " + node.host() + ":" + node.port());
-        });
+        List<Integer> nodeId =  nodes.stream().map(Node::id).collect(Collectors.toList());
+
+        final Properties props = Main.loadProperties("configuration/broker.properties");
+        for (String key : props.stringPropertyNames()) {
+            if (nodeId.contains(Integer.valueOf(key))) {
+                LOG.info(key + " | " + props.getProperty(key) + " | ACTIVE");
+            } else {
+                LOG.info(key + " | " + props.getProperty(key) + " | INACTIVE");
+            }
+        }
         return nodes;
     }
 
@@ -193,20 +254,26 @@ public class Main {
         return ac.listTopics(options).names().get().stream().anyMatch(topicName -> topicName.equalsIgnoreCase(topic));
     }
 
+    static String getTopicConfig(AdminClient ac, String topic, String property) throws InterruptedException, ExecutionException {
+        ConfigResource resource = new ConfigResource(ConfigResource.Type.TOPIC, topic);
+        Map<ConfigResource, Config> configMap = ac.describeConfigs(Collections.singleton(resource)).all().get();
+        final Config config = configMap.get(resource);
+        ConfigEntry configEntry = config.get(property);
+        return configEntry.value();
+    }
+
     static void scanTopic(AdminClient ac, String topic) 
     throws InterruptedException, ExecutionException {
+        
         DescribeTopicsResult result = ac.describeTopics(Collections.singleton(topic));
         Map<String, TopicDescription> results = result.allTopicNames().get();
         results.forEach((name, td) -> {
             LOG.info("Partition Count : " + td.partitions().size());
+            
             td.partitions().forEach(p -> {
                 LOG.info("Topic " + topic + " - partition " + p.partition() + " at broker " + p.leader().id());
             });
         });
-    }
-
-    static DescribeTopicsResult describeTopics(AdminClient ac, Collection<String> topicNames) {
-        return ac.describeTopics(topicNames, new DescribeTopicsOptions());
     }
 }
 
