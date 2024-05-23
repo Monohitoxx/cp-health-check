@@ -21,3 +21,12 @@ Modify the Kafka startup script (for example, kafka-server-start.sh) and add the
 export KAFKA_OPTS="$KAFKA_OPTS -javaagent:/path/to/jmx_prometheus_javaagent.jar=12345:/path/to/jmx_exporter_config.yml"
 
 ```
+
+How to build :
+
+git clone https://github.com/Monohitoxx/cp-health-check.git
+
+```sh
+./gradlew build shadowJar
+
+```
