@@ -76,6 +76,7 @@ public class Main {
                 LOG.info(broker + " | active");
             } catch (Exception e) {
                 LOG.info(broker + " | inactive");
+                healthy = false;  // Set cluster health to false if any broker is inactive
             }
         });
     }
@@ -140,6 +141,7 @@ public class Main {
             LOG.error("Failed to produce events to Kafka Cluster");
             LOG.error(e.getMessage());
             e.printStackTrace();
+            healthy = false;  // Set cluster health to false if production fails
         }
 
         Properties consumerProps = new Properties();
@@ -188,6 +190,7 @@ public class Main {
             LOG.error("Failed to consume events from Kafka Cluster");
             LOG.error(e.getMessage());
             e.printStackTrace();
+            healthy = false;  // Set cluster health to false if consumption fails
         }
 
         if (healthy)
@@ -228,6 +231,7 @@ public class Main {
                 LOG.info(key + " | " + props.getProperty(key) + " | ACTIVE");
             } else {
                 LOG.info(key + " | " + props.getProperty(key) + " | INACTIVE");
+                healthy = false;  // Set cluster health to false if any broker is inactive
             }
         }
         return nodes;
