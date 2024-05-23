@@ -25,6 +25,7 @@ export KAFKA_OPTS="$KAFKA_OPTS -javaagent:/path/to/jmx_prometheus_javaagent.jar=
 How to build :
 
 git clone https://github.com/Monohitoxx/cp-health-check.git
+Run below command in cmd
 
 ```sh
 ./gradlew build shadowJar
