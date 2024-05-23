@@ -1,4 +1,4 @@
-###1. Create a JMX Exporter configuration file
+1. Create a JMX Exporter configuration file
 
 Create or modify the JMX Exporter's configuration file (for example, jmx_exporter_config.yml) and add a rule to collect the io.confluent.healthcheck:type=KafkaHealthCheck metric:
 
@@ -15,7 +15,7 @@ rules:
     type: GAUGE
     help: "Kafka cluster health check status"
 ```
-###2. Configure Kafka to use JMX Exporter
+2. Configure Kafka to use JMX Exporter
 Modify the Kafka startup script (for example, kafka-server-start.sh) and add the JVM parameters of the JMX Exporter:
 ```yaml
 export KAFKA_OPTS="$KAFKA_OPTS -javaagent:/path/to/jmx_prometheus_javaagent.jar=12345:/path/to/jmx_exporter_config.yml"
