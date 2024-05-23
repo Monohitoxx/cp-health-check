@@ -34,3 +34,4 @@ build
 health.log
 notes.txt
 .vscode
+/bin/

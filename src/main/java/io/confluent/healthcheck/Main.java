@@ -17,11 +17,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import java.lang.management.ManagementFactory;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
-import org.apache.kafka.clients.admin.DescribeTopicsOptions;
 import org.apache.kafka.clients.admin.DescribeTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.TopicDescription;
@@ -41,6 +43,7 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class Main {
 
     static Logger LOG = LoggerFactory.getLogger(Main.class.getName());
@@ -52,6 +55,7 @@ public class Main {
     static long cycleInterval = 30000;
     static boolean infiniteRun = true;
     static DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+    static KafkaHealthCheck kafkaHealthCheck;
 
     public static Properties loadProperties(String fileName) throws IOException {
         final Properties envProps = new Properties();
@@ -95,6 +99,7 @@ public class Main {
                 scanTopic(adminClient, topic);
                 String mir = getTopicConfig(adminClient, topic, "min.insync.replicas");
                 if (nodes.size() < Integer.parseInt(mir)) {
+                	kafkaHealthCheck.setHealthy(false);
                     LOG.info("Cluster is NOT HEALTHY");
                     return;
                 }
@@ -103,10 +108,12 @@ public class Main {
         } catch (Exception e) {
 
             e.printStackTrace();
+            kafkaHealthCheck.setHealthy(false);
         }
         
         if (!exist) {
             LOG.info("Health topic is not exist, skipping producer and consumer test");
+            kafkaHealthCheck.setHealthy(false);
             return;
         }
         
@@ -197,9 +204,15 @@ public class Main {
             LOG.info("Cluster is HEALTHY");
         else
             LOG.info("Cluster is NOT HEALTHY");
+        kafkaHealthCheck.setHealthy(healthy);
     }
 
     public static void main(String[] args) throws Exception {
+    	
+        kafkaHealthCheck = new KafkaHealthCheck();
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        ObjectName name = new ObjectName("io.confluent.healthcheck:type=KafkaHealthCheck");
+        mbs.registerMBean(kafkaHealthCheck, name);
 
         final Properties props = Main.loadProperties("configuration/admin.properties");
         cycleInterval = Long.parseLong(props.getProperty("cycle.interval"));

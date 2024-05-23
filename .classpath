@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="build/resources/test" path="src/test/resources">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="resource" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/classes/java/test" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/resources/main" path="src/main/resources">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="resource" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/classes/java/main" path="src/main/java">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/classes/java/test" path="build/generated/sources/annotationProcessor/java/test">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/classes/java/main" path="build/generated/sources/annotationProcessor/java/main">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.9/7cf2726fdcfbc8610f9a71fb3ed639871f315340/slf4j-api-2.0.9.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.9/97e46b94d70f47892145e09d685461245584d596/slf4j-api-2.0.9-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.lz4/lz4-java/1.8.0/4b986a99445e49ea5fbf5d149c4b63f6ed6c6780/lz4-java-1.8.0.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.lz4/lz4-java/1.8.0/7609c362f37f0c0bd3743bc1976df2daa28ad19e/lz4-java-1.8.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/3.4.0/69aebfca9da335f6617f9e5e7a4b45f16e8c86b5/kafka-clients-3.4.0.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/3.4.0/3cc7530a1de1b2eb9355067d3c62c3c9291c3631/kafka-clients-3.4.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.xerial.snappy/snappy-java/1.1.8.4/66f0d56454509f6e36175f2331572e250e04a6cc/snappy-java-1.1.8.4.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.xerial.snappy/snappy-java/1.1.8.4/ae02b50fff26612bdf687952dc970ce9760b620c/snappy-java-1.1.8.4-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-reload4j/2.0.9/dcd3f851b93d7ddc5a5e409a8f3b1254599011fc/slf4j-reload4j-2.0.9.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-reload4j/2.0.9/e087f7c19cebc14536b054877016fd4099094cb5/slf4j-reload4j-2.0.9-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/ch.qos.reload4j/reload4j/1.2.22/f9d9e55d1072d7a697d2bf06e1847e93635a7cf9/reload4j-1.2.22.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/ch.qos.reload4j/reload4j/1.2.22/6e109f68f55e270bebbd0c9ab098977bad6c2bb4/reload4j-1.2.22-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.github.luben/zstd-jni/1.5.2-1/fad786abc1d1b81570e8d9a2fc8a1ef479bc27b6/zstd-jni-1.5.2-1.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.github.luben/zstd-jni/1.5.2-1/fc4dca644fbb8527bc77622209b933a19572a983/zstd-jni-1.5.2-1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.13.4.2/325c06bdfeb628cfb80ebaaf1a26cc1eb558a585/jackson-databind-2.13.4.2.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.13.4.2/99771ed18f5059ca6b4fb51142d7aa4a2eba9002/jackson-databind-2.13.4.2-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.13.4/cf934c681294b97ef6d80082faeefbe1edadf56/jackson-core-2.13.4.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.13.4/dd8da2766363ea64383d1344349acce91d5a5469/jackson-core-2.13.4-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.13.4/858c6cc78e1f08a885b1613e1d817c829df70a6e/jackson-annotations-2.13.4.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.13.4/f6b8a8daa9bcf7ece61c673e53f5d00b9e92e70e/jackson-annotations-2.13.4-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/3.4.0/9ee9b42d89f9bbd6f19bc4fce4407d5d240a7d48/kafka-streams-3.4.0.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/3.4.0/496cc75507f7899c06287d94683da7d8656f269/kafka-streams-3.4.0-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest/2.2/1820c0968dba3a11a1b30669bb1f01978a91dedc/hamcrest-2.2.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest/2.2/a0a13cfc629420efb587d954f982c4c6a100da25/hamcrest-2.2-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/junit/junit/4.13.2/8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12/junit-4.13.2.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/junit/junit/4.13.2/33987872a811fe4d4001ed494b07854822257f42/junit-4.13.2-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.rocksdb/rocksdbjni/7.1.2/ffe87d1c5d5b3a46d065cc4cf5311f18d8233a6b/rocksdbjni-7.1.2.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.rocksdb/rocksdbjni/7.1.2/d1fee252feb98060992556acd8323947dcfac9a1/rocksdbjni-7.1.2-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams-test-utils/3.4.0/778b7d5ef0b97a1ce30da0df702de3c24a520bca/kafka-streams-test-utils-3.4.0.jar" sourcepath="C:/Users/Mono/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams-test-utils/3.4.0/ba6688147d770fcf03f8035ea1ccc6826fbcd797/kafka-streams-test-utils-3.4.0-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
